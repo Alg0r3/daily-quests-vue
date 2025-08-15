@@ -1,20 +1,22 @@
 <script setup lang="js">
-import { onMounted, ref } from 'vue'
-import { getWorkouts } from '../api/workouts.api.js'
+import { onMounted } from 'vue'
+import { useWorkoutsStore } from '@/features/workouts/stores/workouts.js'
+import { storeToRefs } from 'pinia'
 
 /** @typedef {id: string, name: string} Workout */
 
-const workouts = ref(/** @type {Workout[]} */[])
+const workoutsStore = useWorkoutsStore()
+const { workoutList } = storeToRefs(workoutsStore)
 
 onMounted(async () => {
-  workouts.value = await getWorkouts()
+  await workoutsStore.fetchWorkouts()
 })
 </script>
 
 <template>
   <h1>Workout List</h1>
   <ol>
-    <li v-for="workout in workouts" :key="workout.id">
+    <li v-for="workout in workoutList" :key="workout.id">
       {{ workout.name }}
     </li>
   </ol>
