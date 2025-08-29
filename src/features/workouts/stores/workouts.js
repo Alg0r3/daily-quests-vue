@@ -1,22 +1,28 @@
 import { defineStore } from 'pinia'
-import { getWorkouts} from '@/features/workouts/repository/workouts.js'
-import { ref, computed } from 'vue'
+import { getWorkouts, createWorkout } from '@/features/workouts/repositories/workouts.js'
+import { reactive, computed } from 'vue'
 
 export const useWorkoutsStore = defineStore('workouts', () => {
   // -- Public state -- //
-  const workoutsById = ref(new Map())
+  const workoutsById = reactive(new Map())
 
   // -- Public getters -- //
-  const workoutList = computed(() => Array.from(workoutsById.value.values()))
+  const workoutList = computed(() => Array.from(workoutsById.values()))
 
   // -- Actions -- //
   async function fetchWorkouts() {
     const workouts = await getWorkouts()
 
     for (const workout of workouts) {
-      workoutsById.value.set(workout.id, workout)
+      workoutsById.set(workout.id, workout)
     }
   }
 
-  return { workoutList, fetchWorkouts }
+  async function addWorkout(payload) {
+    const workout = await createWorkout(payload)
+
+    workoutsById.set(workout.id, workout)
+  }
+
+  return { workoutList, fetchWorkouts, addWorkout }
 })

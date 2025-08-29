@@ -3,13 +3,13 @@ import { onMounted } from 'vue'
 import { useWorkoutsStore } from '@/features/workouts/stores/workouts.js'
 import { storeToRefs } from 'pinia'
 
-/** @typedef {id: string, name: string} Workout */
+/** @typedef {import('@/features/workouts/models/workouts.js').Workout} Workout*/
 
 const workoutsStore = useWorkoutsStore()
 const { workoutList } = storeToRefs(workoutsStore)
 
-onMounted(async () => {
-  await workoutsStore.fetchWorkouts()
+onMounted(() => {
+  workoutsStore.fetchWorkouts()
 })
 </script>
 
