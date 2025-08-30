@@ -4,7 +4,13 @@
     "checkJs": true,
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "target": "ES2024",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "src/**/*.js",
