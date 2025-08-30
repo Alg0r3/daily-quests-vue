@@ -2,7 +2,7 @@ import { database } from '@/features/workouts/tables/workouts.js'
 import workoutData from '@/features/workouts/fixtures/workouts.json'
 import { v7 as uuidv7 } from 'uuid'
 
-/** @typedef {import('@/features/workouts/models/workouts.js').Workout} Workout*/
+/** @typedef {import('@/features/workouts/models/Workout.js').Workout} Workout*/
 
 async function ensureSeed() {
   const count = await database.workouts.count();
