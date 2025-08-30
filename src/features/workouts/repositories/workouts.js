@@ -2,7 +2,7 @@ import { database } from '@/features/workouts/tables/workouts.js'
 import workoutData from '@/features/workouts/fixtures/workouts.json'
 import { v7 as uuidv7 } from 'uuid'
 
-/** @typedef {import('@/features/workouts/models/workout.js').Workout} Workout*/
+/** @typedef {import('@/features/workouts/models/workouts.js').Workout} Workout*/
 
 async function ensureSeed() {
   const count = await database.workouts.count();
@@ -32,4 +32,8 @@ export async function createWorkout(payload) {
   await database.workouts.add(workout)
 
   return workout
+}
+
+export async function deleteWorkout(id) {
+  await database.workouts.delete(id)
 }

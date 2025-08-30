@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getWorkouts, createWorkout } from '@/features/workouts/repositories/workouts.js'
+import { getWorkouts, createWorkout, deleteWorkout } from '@/features/workouts/repositories/workouts.js'
 import { reactive, computed } from 'vue'
 
 export const useWorkoutsStore = defineStore('workouts', () => {
@@ -20,5 +20,11 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     workoutsById.set(workout.id, workout)
   }
 
-  return { workoutList, fetchWorkouts, addWorkout }
+  async function removeWorkout(id) {
+    await deleteWorkout(id)
+
+    workoutsById.delete(id)
+  }
+
+  return { workoutList, fetchWorkouts, addWorkout, removeWorkout }
 })

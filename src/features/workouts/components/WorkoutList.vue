@@ -8,6 +8,11 @@ import { storeToRefs } from 'pinia'
 const workoutsStore = useWorkoutsStore()
 const { workoutList } = storeToRefs(workoutsStore)
 
+/** @param {Workout['id']} id */
+async function deleteWorkout(id) {
+  await workoutsStore.removeWorkout(id)
+}
+
 onMounted(() => {
   workoutsStore.fetchWorkouts()
 })
@@ -18,6 +23,7 @@ onMounted(() => {
   <ol>
     <li v-for="workout in workoutList" :key="workout.id">
       {{ workout.name }}
+      <i @click="deleteWorkout(workout.id)">x</i>
     </li>
   </ol>
 </template>
