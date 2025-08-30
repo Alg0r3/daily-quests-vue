@@ -19,7 +19,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <h1>Workout List</h1>
+  <h2>Workout List</h2>
   <ol>
     <li v-for="workout in workoutList" :key="workout.id">
       {{ workout.name }}

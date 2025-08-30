@@ -12,11 +12,11 @@ async function onSubmit() {
 </script>
 
 <template>
-  <h1>Workout Form</h1>
+  <h2>New workout</h2>
   <form @submit.prevent="onSubmit">
     <label for="name">Name</label>
     <input id="name" type="text" placeholder="Type a name" v-model.trim="name" />
-    <button type="submit">Add workout</button>
+    <button type="submit">Add</button>
   </form>
 </template>
 
