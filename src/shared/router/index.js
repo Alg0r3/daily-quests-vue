@@ -1,5 +1,5 @@
+import WorkoutPage from '@/pages/WorkoutPage.vue'
 import { createRouter, createWebHistory } from 'vue-router'
-import { h } from 'vue'
 
 /** @typedef {{ title?: string }} RouteMeta */
 
@@ -7,9 +7,9 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: { name: 'empty', render: () => h('div') },
+    component: WorkoutPage,
     /** @type RouteMeta */
-    meta: { title: 'Home - WorkoutLogger' },
+    meta: { title: 'Workout' },
   },
 ]
 
