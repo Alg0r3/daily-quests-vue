@@ -3,13 +3,9 @@ import { getWorkouts, createWorkout } from '@/features/workouts/repositories/wor
 import { reactive, computed } from 'vue'
 
 export const useWorkoutsStore = defineStore('workouts', () => {
-  // -- Public state -- //
   const workoutsById = reactive(new Map())
-
-  // -- Public getters -- //
   const workoutList = computed(() => Array.from(workoutsById.values()))
 
-  // -- Actions -- //
   async function fetchWorkouts() {
     const workouts = await getWorkouts()
 

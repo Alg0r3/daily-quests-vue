@@ -1,14 +1,22 @@
+import { database } from '@/features/workouts/tables/workouts.js'
 import workoutData from '@/features/workouts/fixtures/workouts.json'
 import { v7 as uuidv7 } from 'uuid'
 
 /** @typedef {import('@/features/workouts/models/workout.js').Workout} Workout*/
 
-/** @type {Workout[]} */
-let data = [...workoutData]
+async function ensureSeed() {
+  const count = await database.workouts.count();
+
+  if (count === 0) {
+    await database.workouts.bulkAdd(workoutData)
+  }
+}
 
 /** @returns {Promise<Workout[]>} */
 export async function getWorkouts() {
-  return data
+  await ensureSeed()
+
+  return database.workouts.toArray()
 }
 
 /**
@@ -16,13 +24,12 @@ export async function getWorkouts() {
  * @returns {Promise<Workout>}
  */
 export async function createWorkout(payload) {
-  const id = uuidv7()
   const workout = {
-    id: id,
+    id: uuidv7(),
     name: payload.name,
   }
 
-  data.push(workout)
+  await database.workouts.add(workout)
 
   return workout
 }
