@@ -1,4 +1,4 @@
-import { database } from '@/features/workouts/tables/workouts.js'
+import { database } from '@/shared/database/index.js'
 import workoutData from '@/features/workouts/fixtures/workouts.json'
 import { v7 as uuidv7 } from 'uuid'
 
