@@ -12,6 +12,7 @@
     "preview": "vite preview",
     "test:unit": "vitest",
     "lint": "eslint . --fix",
+    "typecheck": "tsc --project jsconfig.json",
     "format": "prettier --write src/"
   },
   "dependencies": {
@@ -33,6 +34,7 @@
     "globals": "^16.3.0",
     "jsdom": "^26.1.0",
     "prettier": "3.6.2",
+    "typescript": "^5.9.2",
     "vite": "^7.0.6",
     "vite-plugin-vue-devtools": "^8.0.0",
     "vitest": "^3.2.4"
