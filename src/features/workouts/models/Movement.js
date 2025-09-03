@@ -5,4 +5,4 @@
  * @property {string} [notes] - Additional notes about the movement (optional)
  */
 
-export {}
+export {};

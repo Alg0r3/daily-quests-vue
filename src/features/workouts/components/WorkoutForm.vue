@@ -1,13 +1,13 @@
 <script setup lang="js">
-import { useWorkoutsStore } from '@/features/workouts/stores/workouts.js'
-import { ref } from 'vue'
+import { useWorkoutsStore } from '@/features/workouts/stores/workouts.js';
+import { ref } from 'vue';
 
-const workouts = useWorkoutsStore()
-const name = ref('')
+const workouts = useWorkoutsStore();
+const name = ref('');
 
 async function onSubmit() {
-  await workouts.addWorkout({ name: name.value })
-  name.value = ''
+  await workouts.addWorkout({ name: name.value });
+  name.value = '';
 }
 </script>
 

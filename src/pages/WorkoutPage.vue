@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import WorkoutForm from '@/features/workouts/components/WorkoutForm.vue'
-import WorkoutList from '@/features/workouts/components/WorkoutList.vue'
-import { ref } from 'vue'
+import WorkoutForm from '@/features/workouts/components/WorkoutForm.vue';
+import WorkoutList from '@/features/workouts/components/WorkoutList.vue';
+import { ref } from 'vue';
 
-const isFormVisible = ref(false)
+const isFormVisible = ref(false);
 
 function toggleFormVisibility() {
-  isFormVisible.value = !isFormVisible.value
+  isFormVisible.value = !isFormVisible.value;
 }
 </script>
 
@@ -20,7 +20,6 @@ function toggleFormVisibility() {
   <button @click="toggleFormVisibility">
     {{ isFormVisible ? 'Cancel' : 'Add workout' }}
   </button>
-
 
   <WorkoutList />
 </template>

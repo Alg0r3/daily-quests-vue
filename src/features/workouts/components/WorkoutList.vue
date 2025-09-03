@@ -1,21 +1,21 @@
 <script setup lang="js">
-import { onMounted } from 'vue'
-import { useWorkoutsStore } from '@/features/workouts/stores/workouts.js'
-import { storeToRefs } from 'pinia'
+import { onMounted } from 'vue';
+import { useWorkoutsStore } from '@/features/workouts/stores/workouts.js';
+import { storeToRefs } from 'pinia';
 
 /** @typedef {import('@/features/workouts/models/Workout.js').Workout} Workout*/
 
-const workoutsStore = useWorkoutsStore()
-const { workoutList } = storeToRefs(workoutsStore)
+const workoutsStore = useWorkoutsStore();
+const { workoutList } = storeToRefs(workoutsStore);
 
 /** @param {Workout['id']} id */
 async function deleteWorkout(id) {
-  await workoutsStore.removeWorkout(id)
+  await workoutsStore.removeWorkout(id);
 }
 
 onMounted(() => {
-  workoutsStore.fetchWorkouts()
-})
+  workoutsStore.fetchWorkouts();
+});
 </script>
 
 <template>

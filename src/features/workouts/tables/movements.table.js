@@ -1,5 +1,5 @@
 export const movementsTable = {
   schema: {
-    movements: 'id'
-  }
-}
+    movements: 'id',
+  },
+};

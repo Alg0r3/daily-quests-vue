@@ -1,5 +1,5 @@
 export const workoutsTable = {
   schema: {
-    workouts: 'id'
-  }
-}
+    workouts: 'id',
+  },
+};

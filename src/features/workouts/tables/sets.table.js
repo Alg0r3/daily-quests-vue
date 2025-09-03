@@ -1,5 +1,5 @@
 export const setsTable = {
   schema: {
-    sets: 'id'
-  }
-}
+    sets: 'id',
+  },
+};
