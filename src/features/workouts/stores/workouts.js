@@ -3,7 +3,7 @@ import {
   getWorkouts,
   createWorkout,
   deleteWorkout,
-} from '@/features/workouts/repositories/workouts.js';
+} from '@/features/workouts/repositories/workouts.repository.js';
 import { reactive, computed } from 'vue';
 
 /** @typedef {import('@/features/workouts/types').Workout} Workout */
