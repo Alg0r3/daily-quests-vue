@@ -18,7 +18,7 @@ export async function getWorkouts() {
   return workoutsDB.toArray();
 }
 
-/** @param {Omit<Workout, 'id'>} payload*/
+/** @param {Omit<Workout, 'id'>} payload */
 export async function createWorkout(payload) {
   /** @type {Workout} */
   const workout = {

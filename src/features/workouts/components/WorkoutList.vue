@@ -1,6 +1,6 @@
 <script setup lang="js">
 import { onMounted } from 'vue';
-import { useWorkoutsStore } from '@/features/workouts/stores/workouts.js';
+import { useWorkoutsStore } from '@/features/workouts/stores/workouts.store.js';
 import { storeToRefs } from 'pinia';
 
 const workoutsStore = useWorkoutsStore();
