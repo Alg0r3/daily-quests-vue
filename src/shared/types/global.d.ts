@@ -1,4 +1,8 @@
-/**
- * A Universally Unique Identifier (UUID).
- */
-type UUID = string;
+declare global {
+  /**
+   * A Universally Unique Identifier (UUID).
+   */
+  type UUID = string;
+}
+
+export {};
