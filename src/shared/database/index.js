@@ -4,7 +4,8 @@ import { exercisesTable } from '@/features/workouts/tables/exercises.table.js';
 import { movementsTable } from '@/features/workouts/tables/movements.table.js';
 import { setsTable } from '@/features/workouts/tables/sets.table.js';
 
-/** @typedef {import('@/features/workouts/types/workouts.type.d.ts').Workout} Workout */
+/** @typedef {import('@/features/workouts/types').Workout} Workout */
+/** @typedef {import('@/features/workouts/types').Exercise} Exercise */
 
 export const database = new Dexie('database');
 
@@ -17,3 +18,6 @@ database.version(1).stores({
 
 /** @type {Dexie.Table<Workout, string>} */
 export const workoutsDB = database.table('workouts');
+
+/** @type {Dexie.Table<Exercise, string>} */
+export const exercisesDB = database.table('exercises');
