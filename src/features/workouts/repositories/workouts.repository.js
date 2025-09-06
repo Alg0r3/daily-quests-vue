@@ -12,19 +12,28 @@ async function ensureSeed() {
   }
 }
 
-export async function getWorkouts() {
+export async function findAll() {
   await ensureSeed();
 
   return workoutsDB.toArray();
 }
 
 /** @param {UUID} id */
-export async function getWorkout(id) {
-  return workoutsDB.get(id);
+export async function findById(id) {
+  const workout = await workoutsDB.get(id);
+
+  if (!workout) {
+    const error = new Error(`Workout not found with ID: ${id}`);
+    error.name = 'NotFoundError';
+
+    throw error;
+  }
+
+  return workout;
 }
 
 /** @param {Omit<Workout, 'id'>} payload */
-export async function createWorkout(payload) {
+export async function create(payload) {
   /** @type {Workout} */
   const workout = {
     id: uuidv7(),
@@ -37,6 +46,6 @@ export async function createWorkout(payload) {
 }
 
 /** @param {UUID} id */
-export async function deleteWorkout(id) {
+export async function remove(id) {
   await workoutsDB.delete(id);
 }

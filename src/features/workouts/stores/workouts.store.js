@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
 import {
-  getWorkouts,
-  getWorkout,
-  createWorkout,
-  deleteWorkout,
+  findAll,
+  findById,
+  create,
+  remove,
 } from '@/features/workouts/repositories/workouts.repository.js';
 import { reactive, ref, computed } from 'vue';
 import { ensureError } from '@/shared/utils/errors.js';
@@ -25,7 +25,7 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     error.value = null;
 
     try {
-      const workouts = await getWorkouts();
+      const workouts = await findAll();
 
       workoutsById.clear();
 
@@ -49,7 +49,7 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     error.value = null;
 
     try {
-      const workout = await getWorkout(id);
+      const workout = await findById(id);
 
       workoutsById.set(workout.id, workout);
 
@@ -71,7 +71,7 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     error.value = null;
 
     try {
-      const workout = await createWorkout(payload);
+      const workout = await create(payload);
 
       workoutsById.set(workout.id, workout);
     } catch (fetchError) {
@@ -91,7 +91,7 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     error.value = null;
 
     try {
-      await deleteWorkout(id);
+      await remove(id);
 
       workoutsById.delete(id);
     } catch (fetchError) {
