@@ -9,11 +9,11 @@ const { workoutList } = storeToRefs(workoutsStore);
 
 /** @param {UUID} id */
 async function deleteWorkout(id) {
-  await workoutsStore.removeWorkout(id);
+  await workoutsStore.remove(id);
 }
 
 onMounted(() => {
-  workoutsStore.fetchWorkouts();
+  workoutsStore.loadAll();
 });
 </script>
 

@@ -2,11 +2,11 @@
 import { useWorkoutsStore } from '@/features/workouts/stores/workouts.store.js';
 import { ref } from 'vue';
 
-const workouts = useWorkoutsStore();
+const workoutsStore = useWorkoutsStore();
 const name = ref('');
 
 async function onSubmit() {
-  await workouts.addWorkout({ name: name.value });
+  await workoutsStore.create({ name: name.value });
   name.value = '';
 }
 </script>

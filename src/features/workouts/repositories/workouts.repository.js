@@ -49,3 +49,5 @@ export async function create(payload) {
 export async function remove(id) {
   await workoutsDB.delete(id);
 }
+
+export const workoutsRepository = { findAll, findById, create, remove };

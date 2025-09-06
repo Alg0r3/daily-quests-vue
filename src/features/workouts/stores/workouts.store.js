@@ -1,10 +1,5 @@
 import { defineStore } from 'pinia';
-import {
-  findAll,
-  findById,
-  create,
-  remove,
-} from '@/features/workouts/repositories/workouts.repository.js';
+import { workoutsRepository } from '@/features/workouts/repositories/workouts.repository.js';
 import { reactive, ref, computed } from 'vue';
 import { ensureError } from '@/shared/utils/errors.js';
 
@@ -20,12 +15,12 @@ export const useWorkoutsStore = defineStore('workouts', () => {
   /** @type {import('vue').ComputedRef<Workout[]>} */
   const workoutList = computed(() => Array.from(workoutsById.values()));
 
-  async function fetchWorkouts() {
+  async function loadAll() {
     loading.value = true;
     error.value = null;
 
     try {
-      const workouts = await findAll();
+      const workouts = await workoutsRepository.findAll();
 
       workoutsById.clear();
 
@@ -44,12 +39,12 @@ export const useWorkoutsStore = defineStore('workouts', () => {
   }
 
   /** @param {UUID} id */
-  async function fetchWorkout(id) {
+  async function loadById(id) {
     loading.value = true;
     error.value = null;
 
     try {
-      const workout = await findById(id);
+      const workout = await workoutsRepository.findById(id);
 
       workoutsById.set(workout.id, workout);
 
@@ -66,12 +61,12 @@ export const useWorkoutsStore = defineStore('workouts', () => {
   }
 
   /** @param {Omit<Workout, 'id'>} payload */
-  async function addWorkout(payload) {
+  async function create(payload) {
     loading.value = true;
     error.value = null;
 
     try {
-      const workout = await create(payload);
+      const workout = await workoutsRepository.create(payload);
 
       workoutsById.set(workout.id, workout);
     } catch (fetchError) {
@@ -86,12 +81,12 @@ export const useWorkoutsStore = defineStore('workouts', () => {
   }
 
   /** @param {UUID} id */
-  async function removeWorkout(id) {
+  async function remove(id) {
     loading.value = true;
     error.value = null;
 
     try {
-      await remove(id);
+      await workoutsRepository.remove(id);
 
       workoutsById.delete(id);
     } catch (fetchError) {
@@ -105,5 +100,12 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     }
   }
 
-  return { workoutList, workoutsById, fetchWorkouts, fetchWorkout, addWorkout, removeWorkout };
+  return {
+    workoutList,
+    workoutsById,
+    loadAll,
+    loadById,
+    create,
+    remove,
+  };
 });
