@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import WorkoutForm from '@/features/workouts/components/WorkoutForm.vue';
 import WorkoutList from '@/features/workouts/components/WorkoutList.vue';
 import { ref } from 'vue';
