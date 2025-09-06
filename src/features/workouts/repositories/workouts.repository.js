@@ -18,6 +18,11 @@ export async function getWorkouts() {
   return workoutsDB.toArray();
 }
 
+/** @param {UUID} id */
+export async function getWorkout(id) {
+  return workoutsDB.get(id);
+}
+
 /** @param {Omit<Workout, 'id'>} payload */
 export async function createWorkout(payload) {
   /** @type {Workout} */
