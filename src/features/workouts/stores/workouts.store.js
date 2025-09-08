@@ -7,7 +7,7 @@ import { ensureError } from '@/shared/utils/errors.js';
 
 export const useWorkoutsStore = defineStore('workouts', () => {
   const workoutsById = reactive(new Map());
-  const loading = ref(false);
+  const isLoading = ref(false);
 
   /** @type {import('vue').Ref<Error | null>} */
   const error = ref(null);
@@ -15,11 +15,8 @@ export const useWorkoutsStore = defineStore('workouts', () => {
   /** @type {import('vue').ComputedRef<Workout[]>} */
   const workoutList = computed(() => Array.from(workoutsById.values()));
 
-  /**
-   *
-   */
   async function loadAll() {
-    loading.value = true;
+    isLoading.value = true;
     error.value = null;
 
     try {
@@ -37,7 +34,7 @@ export const useWorkoutsStore = defineStore('workouts', () => {
 
       throw fetchError;
     } finally {
-      loading.value = false;
+      isLoading.value = false;
     }
   }
 
@@ -46,7 +43,7 @@ export const useWorkoutsStore = defineStore('workouts', () => {
    * @returns {Promise<Workout>}
    */
   async function loadById(id) {
-    loading.value = true;
+    isLoading.value = true;
     error.value = null;
 
     try {
@@ -62,13 +59,13 @@ export const useWorkoutsStore = defineStore('workouts', () => {
 
       throw fetchError;
     } finally {
-      loading.value = false;
+      isLoading.value = false;
     }
   }
 
   /** @param {Omit<Workout, 'id'>} payload */
   async function create(payload) {
-    loading.value = true;
+    isLoading.value = true;
     error.value = null;
 
     try {
@@ -82,13 +79,13 @@ export const useWorkoutsStore = defineStore('workouts', () => {
 
       throw fetchError;
     } finally {
-      loading.value = false;
+      isLoading.value = false;
     }
   }
 
   /** @param {UUID} id */
   async function remove(id) {
-    loading.value = true;
+    isLoading.value = true;
     error.value = null;
 
     try {
@@ -102,7 +99,7 @@ export const useWorkoutsStore = defineStore('workouts', () => {
 
       throw fetchError;
     } finally {
-      loading.value = false;
+      isLoading.value = false;
     }
   }
 
