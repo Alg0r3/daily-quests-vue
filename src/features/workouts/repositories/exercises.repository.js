@@ -4,7 +4,7 @@ import { v7 as uuidv7 } from 'uuid';
 /** @typedef {import('@/features/workouts/types').Exercise} Exercise */
 
 /** @returns {Promise<Exercise[]>} */
-export async function getExercises() {
+export async function findAll() {
   return exercisesDB.toArray();
 }
 
@@ -12,7 +12,7 @@ export async function getExercises() {
  * @param {Omit<Exercise, 'id'>} payload
  * @returns {Promise<Exercise>}
  */
-export async function createExercise(payload) {
+export async function create(payload) {
   /** @type {Exercise} */
   const exercise = {
     id: uuidv7(),
@@ -28,6 +28,8 @@ export async function createExercise(payload) {
 }
 
 /** @param {UUID} id */
-export async function deleteExercise(id) {
+export async function remove(id) {
   await exercisesDB.delete(id);
 }
+
+export const exercisesRepository = { findAll, create, remove };
