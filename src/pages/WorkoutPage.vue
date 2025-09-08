@@ -42,7 +42,7 @@ function closeForm() {
     </section>
   </Transition>
 
-  <WorkoutList />
+  <WorkoutList @creation-needed="openForm" />
 </template>
 
 <style scoped></style>
