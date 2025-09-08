@@ -14,6 +14,9 @@ export const useExercisesStore = defineStore('exercises', () => {
   /** @type {import('vue').ComputedRef<Exercise[]>} */
   const exerciseList = computed(() => Array.from(exercisesById.values()));
 
+  /**
+   *
+   */
   async function fetchExercises() {
     const exercises = await getExercises();
 

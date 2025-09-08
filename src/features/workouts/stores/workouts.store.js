@@ -15,6 +15,9 @@ export const useWorkoutsStore = defineStore('workouts', () => {
   /** @type {import('vue').ComputedRef<Workout[]>} */
   const workoutList = computed(() => Array.from(workoutsById.values()));
 
+  /**
+   *
+   */
   async function loadAll() {
     loading.value = true;
     error.value = null;
@@ -38,7 +41,10 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     }
   }
 
-  /** @param {UUID} id */
+  /**
+   * @param {UUID} id
+   * @returns {Promise<Workout>}
+   */
   async function loadById(id) {
     loading.value = true;
     error.value = null;

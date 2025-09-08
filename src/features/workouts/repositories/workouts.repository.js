@@ -8,7 +8,10 @@ export async function findAll() {
   return workoutsDB.toArray();
 }
 
-/** @param {UUID} id */
+/**
+ * @param {UUID} id
+ * @returns {Promise<Workout>}
+ */
 export async function findById(id) {
   const workout = await workoutsDB.get(id);
 
@@ -22,7 +25,10 @@ export async function findById(id) {
   return workout;
 }
 
-/** @param {Omit<Workout, 'id'>} payload */
+/**
+ * @param {Omit<Workout, 'id'>} payload
+ * @returns {Promise<Workout>}
+ */
 export async function create(payload) {
   /** @type {Workout} */
   const workout = {
