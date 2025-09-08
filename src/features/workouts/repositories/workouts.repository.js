@@ -1,20 +1,10 @@
 import { workoutsDB } from '@/shared/database/index.js';
-import workoutData from '@/features/workouts/fixtures/workouts.json';
 import { v7 as uuidv7 } from 'uuid';
 
 /** @typedef {import('@/features/workouts/types').Workout} Workout */
 
-async function ensureSeed() {
-  const count = await workoutsDB.count();
-
-  if (count === 0) {
-    await workoutsDB.bulkAdd(workoutData);
-  }
-}
-
+/** @returns {Promise<Workout[]>} */
 export async function findAll() {
-  await ensureSeed();
-
   return workoutsDB.toArray();
 }
 
