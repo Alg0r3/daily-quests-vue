@@ -1,5 +1,5 @@
 <script setup lang="js">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, nextTick } from 'vue';
 import { useWorkoutsStore } from '@/features/workouts/stores/workouts.store.js';
 import { storeToRefs } from 'pinia';
 import WorkoutDetail from '@/features/workouts/components/WorkoutDetail.vue';
@@ -16,9 +16,12 @@ const workoutsStore = useWorkoutsStore();
 const { workoutList } = storeToRefs(workoutsStore);
 
 const isLoading = ref(false);
+
 /** @type {import('vue').Ref<Error | null>} */
 const error = ref(null);
 const deletingIds = reactive(new Set());
+/** @type {import('vue').Ref<HTMLButtonElement[]>} */
+const deleteButtons = ref([]);
 
 /** @type {Emit} */
 const emit = defineEmits(['creation-needed', 'deleted', 'loading-failed']);
@@ -40,7 +43,8 @@ async function load() {
 
 /** @param {UUID} id */
 async function deleteWorkout(id) {
-  const workout = workoutList.value.find((workout) => workout.id === id);
+  const index = workoutList.value.findIndex((workout) => workout.id === id);
+  const workout = workoutList.value[index];
 
   if (!workout) {
     console.warn(`Workout not found in list. Skipping delete confirmation.`);
@@ -50,12 +54,26 @@ async function deleteWorkout(id) {
   // TODO: Improve this
   if (!confirm(`Are you sure you want to delete "${workout.name}" ?`)) return;
 
+  if (deletingIds.has(id)) return;
+
   deletingIds.add(id);
 
   try {
     await workoutsStore.remove(id);
 
     emit('deleted', { id, name: workout.name });
+
+    // After Vue updates the DOM, move focus
+    await nextTick();
+
+    if (workoutList.value.length > 0) {
+      /** @type {HTMLButtonElement | undefined} */
+      const target = deleteButtons.value[index] || deleteButtons.value[index - 1];
+
+      target?.focus();
+    } else {
+      emit('creation-needed');
+    }
   } catch (storeError) {
     console.error('Failed to delete workout.', storeError);
     // TODO: Improve this
@@ -95,6 +113,7 @@ onMounted(load);
           <button
             type="button"
             title="Delete"
+            ref="deleteButtons"
             @click="deleteWorkout(workout.id)"
             :disabled="deletingIds.has(workout.id)"
             :aria-busy="deletingIds.has(workout.id) ? 'true' : 'false'"

@@ -15,6 +15,10 @@ function openForm() {
 function closeForm() {
   isFormVisible.value = false;
 
+  focusCreateButton();
+}
+
+function focusCreateButton() {
   const element = createButton.value;
 
   if (element) {
@@ -42,7 +46,7 @@ function closeForm() {
     </section>
   </Transition>
 
-  <WorkoutList @creation-needed="openForm" />
+  <WorkoutList @creation-needed="focusCreateButton" />
 </template>
 
 <style scoped></style>
