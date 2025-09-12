@@ -1,9 +1,10 @@
 <script setup lang="js">
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useWorkoutsStore } from '@/features/workouts/stores/workouts.store.js';
 import { storeToRefs } from 'pinia';
 import WorkoutDetail from '@/features/workouts/components/WorkoutDetail.vue';
 import { ensureError } from '@/shared/utils/errors.js';
+import { useExpandableList } from '@/features/workouts/composables/useExpandableList.js';
 import { useListDeletionFocus } from '@/features/workouts/composables/useListDeletionFocus.js';
 
 /** @typedef {{
@@ -19,6 +20,7 @@ const { workoutList } = storeToRefs(workoutsStore);
 /** @type {Emit} */
 const emit = defineEmits(['creation-needed', 'deleted', 'loading-failed']);
 
+const { isExpanded, forceCollapse, setExpandButtonRef, toggleExpand } = useExpandableList();
 const { isDeleting, markDeleting, unmarkDeleting, setDeleteButtonRef, focusNeighbourAfterRemoval } =
   useListDeletionFocus({ onListBecameEmpty: () => emit('creation-needed') });
 
@@ -26,53 +28,12 @@ const isLoading = ref(false);
 /** @type {import('vue').Ref<Error|null>} */
 const error = ref(null);
 
-/** @type {import('vue').Ref<UUID|null>} */
-const expandedWorkoutId = ref(null);
-/** @type {import('vue').Ref<Record<UUID, HTMLButtonElement|null>>} */
-const expandButtonById = ref({});
-
-/** @returns {Promise<void>} */
-async function load() {
-  try {
-    isLoading.value = true;
-    error.value = null;
-
-    await workoutsStore.loadAll();
-  } catch (storeError) {
-    error.value = ensureError(storeError);
-
-    emit('loading-failed', error.value);
-  } finally {
-    isLoading.value = false;
-  }
-}
-
 /**
- * @param {UUID} id
- * @returns {boolean}
- */
-function isExpanded(id) {
-  return expandedWorkoutId.value === id;
-}
-
-/**
- * @param {UUID} id
+ * @param {UUID} id - The ID of the workout to toggle details for.
  * @returns {Promise<void>}
  */
 async function toggleDetails(id) {
-  if (isExpanded(id)) {
-    expandedWorkoutId.value = null;
-
-    await nextTick();
-
-    expandButtonById.value[id]?.focus();
-
-    return;
-  }
-
-  expandedWorkoutId.value = id;
-
-  await nextTick();
+  await toggleExpand(id);
 }
 
 /**
@@ -98,12 +59,8 @@ async function deleteWorkout(id) {
   try {
     await workoutsStore.remove(id);
 
-    const wasExpanded = isExpanded(id);
-
-    // If we delete the expanded workout, close it and manage focus
-    if (wasExpanded) {
-      expandedWorkoutId.value = null;
-    }
+    // If we're deleting the currently expanded item, collapse it
+    forceCollapse(id);
 
     emit('deleted', { id, name: workout.name });
 
@@ -118,16 +75,19 @@ async function deleteWorkout(id) {
   }
 }
 
-/**
- * @param {UUID} id
- * @param {Element|import('vue').ComponentPublicInstance|null} element
- * @returns {void}
- */
-function setExpandButtonRef(id, element) {
-  if (element instanceof HTMLButtonElement) {
-    expandButtonById.value[id] = element;
-  } else {
-    delete expandButtonById.value[id];
+/** @returns {Promise<void>} */
+async function load() {
+  try {
+    isLoading.value = true;
+    error.value = null;
+
+    await workoutsStore.loadAll();
+  } catch (storeError) {
+    error.value = ensureError(storeError);
+
+    emit('loading-failed', error.value);
+  } finally {
+    isLoading.value = false;
   }
 }
 
@@ -138,27 +98,27 @@ onMounted(load);
   <section aria-labelledby="workout-list-title">
     <h2 id="workout-list-title">Workout List</h2>
 
-    <!-- Loading/error -->
+    <!-- Loading/error states -->
     <p role="status" v-if="isLoading">Loading workouts...</p>
     <div role="alert" v-else-if="error">
       <p>{{ error.message || 'Could not load workouts.' }}</p>
-      <button type="button" @click="load">Retry</button>
+      <button type="button" @click="load()">Retry</button>
     </div>
 
-    <!-- Empty -->
+    <!-- Empty state -->
     <div v-else-if="workoutList.length === 0" aria-live="polite">
       <p>No workouts yet.</p>
       <button type="button" @click="emit('creation-needed')">Create your first workout</button>
     </div>
 
-    <!-- List -->
+    <!-- List with expandable items -->
     <div v-else>
       <TransitionGroup name="fade" tag="ol">
         <li v-for="workout in workoutList" :key="workout.id">
           <div class="row">
             <strong :id="`workout-${workout.id}-summary`">{{ workout.name }}</strong>
 
-            <!-- Expand/collapse -->
+            <!-- Expand/collapse button with ref management -->
             <button
               type="button"
               class="expand"
@@ -170,7 +130,7 @@ onMounted(load);
               {{ isExpanded(workout.id) ? 'Hide details' : 'View details' }}
             </button>
 
-            <!-- Delete -->
+            <!-- Delete button with deletion state -->
             <button
               type="button"
               title="Delete"
@@ -186,7 +146,7 @@ onMounted(load);
             </button>
           </div>
 
-          <!-- Lazy-mounted details -->
+          <!-- Expandable details -->
           <Transition name="fade">
             <WorkoutDetail
               class="details"
