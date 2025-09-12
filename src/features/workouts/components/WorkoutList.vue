@@ -1,9 +1,10 @@
 <script setup lang="js">
-import { ref, reactive, onMounted, nextTick } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import { useWorkoutsStore } from '@/features/workouts/stores/workouts.store.js';
 import { storeToRefs } from 'pinia';
 import WorkoutDetail from '@/features/workouts/components/WorkoutDetail.vue';
 import { ensureError } from '@/shared/utils/errors.js';
+import { useListDeletionFocus } from '@/features/workouts/composables/useListDeletionFocus.js';
 
 /** @typedef {{
  *  (event: 'creation-needed'): void;
@@ -15,6 +16,12 @@ import { ensureError } from '@/shared/utils/errors.js';
 const workoutsStore = useWorkoutsStore();
 const { workoutList } = storeToRefs(workoutsStore);
 
+/** @type {Emit} */
+const emit = defineEmits(['creation-needed', 'deleted', 'loading-failed']);
+
+const { isDeleting, markDeleting, unmarkDeleting, setDeleteButtonRef, focusNeighbourAfterRemoval } =
+  useListDeletionFocus({ onListBecameEmpty: () => emit('creation-needed') });
+
 const isLoading = ref(false);
 /** @type {import('vue').Ref<Error|null>} */
 const error = ref(null);
@@ -23,13 +30,6 @@ const error = ref(null);
 const expandedWorkoutId = ref(null);
 /** @type {import('vue').Ref<Record<UUID, HTMLButtonElement|null>>} */
 const expandButtonById = ref({});
-
-const deletingIds = reactive(new Set());
-/** @type {import('vue').Ref<Record<UUID, HTMLButtonElement|null>>} */
-const deleteButtonById = ref({});
-
-/** @type {Emit} */
-const emit = defineEmits(['creation-needed', 'deleted', 'loading-failed']);
 
 /** @returns {Promise<void>} */
 async function load() {
@@ -80,8 +80,8 @@ async function toggleDetails(id) {
  * @returns {Promise<void>}
  */
 async function deleteWorkout(id) {
-  const index = workoutList.value.findIndex((workout) => workout.id === id);
-  const workout = workoutList.value[index];
+  const indexBeforeRemoval = workoutList.value.findIndex((workout) => workout.id === id);
+  const workout = workoutList.value[indexBeforeRemoval];
 
   if (!workout) {
     console.warn(`Workout not found in list. Skipping delete confirmation.`);
@@ -91,9 +91,9 @@ async function deleteWorkout(id) {
   // TODO: Improve this
   if (!confirm(`Are you sure you want to delete "${workout.name}" ?`)) return;
 
-  if (deletingIds.has(id)) return;
+  if (isDeleting(id)) return;
 
-  deletingIds.add(id);
+  markDeleting(id);
 
   try {
     await workoutsStore.remove(id);
@@ -107,28 +107,14 @@ async function deleteWorkout(id) {
 
     emit('deleted', { id, name: workout.name });
 
-    // After Vue updates the DOM, move focus
-    await nextTick();
-
-    if (workoutList.value.length > 0) {
-      const nextId = workoutList.value[index]?.id;
-      const prevId = workoutList.value[index - 1]?.id;
-
-      const target =
-        (nextId && deleteButtonById.value[nextId]) ||
-        (prevId && deleteButtonById.value[prevId]) ||
-        null;
-
-      target?.focus();
-    } else {
-      emit('creation-needed');
-    }
+    // Let the composable decide where to move focus next
+    await focusNeighbourAfterRemoval(id, indexBeforeRemoval, workoutList.value);
   } catch (storeError) {
     console.error('Failed to delete workout.', storeError);
     // TODO: Improve this
     alert('Failed to delete workout. Please, try again.');
   } finally {
-    deletingIds.delete(id);
+    unmarkDeleting(id);
   }
 }
 
@@ -142,19 +128,6 @@ function setExpandButtonRef(id, element) {
     expandButtonById.value[id] = element;
   } else {
     delete expandButtonById.value[id];
-  }
-}
-
-/**
- * @param {UUID} id
- * @param {Element|import('vue').ComponentPublicInstance|null} element
- * @returns {void}
- */
-function setDeleteButtonRef(id, element) {
-  if (element instanceof HTMLButtonElement) {
-    deleteButtonById.value[id] = element;
-  } else {
-    delete deleteButtonById.value[id];
   }
 }
 
@@ -203,15 +176,13 @@ onMounted(load);
               title="Delete"
               @click="deleteWorkout(workout.id)"
               :ref="(element) => setDeleteButtonRef(workout.id, element)"
-              :disabled="deletingIds.has(workout.id)"
-              :aria-busy="deletingIds.has(workout.id)"
+              :disabled="isDeleting(workout.id)"
+              :aria-busy="isDeleting(workout.id)"
               :aria-label="
-                deletingIds.has(workout.id)
-                  ? `Deleting ${workout.name}...`
-                  : `Delete ${workout.name}`
+                isDeleting(workout.id) ? `Deleting ${workout.name}...` : `Delete ${workout.name}`
               "
             >
-              {{ deletingIds.has(workout.id) ? 'Deleting...' : 'Delete' }}
+              {{ isDeleting(workout.id) ? 'Deleting...' : 'Delete' }}
             </button>
           </div>
 
