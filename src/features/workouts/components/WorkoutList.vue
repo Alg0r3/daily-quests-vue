@@ -1,11 +1,10 @@
 <script setup lang="js">
-import { ref, onMounted } from 'vue';
 import { useWorkoutsStore } from '@/features/workouts/stores/workouts.store.js';
 import { storeToRefs } from 'pinia';
-import WorkoutDetail from '@/features/workouts/components/WorkoutDetail.vue';
-import { ensureError } from '@/shared/utils/errors.js';
+import { useAsyncOperation } from '@/features/workouts/composables/useAsyncOperation.js';
 import { useExpandableList } from '@/features/workouts/composables/useExpandableList.js';
 import { useListDeletionFocus } from '@/features/workouts/composables/useListDeletionFocus.js';
+import WorkoutDetail from '@/features/workouts/components/WorkoutDetail.vue';
 
 /** @typedef {{
  *  (event: 'creation-needed'): void;
@@ -20,13 +19,18 @@ const { workoutList } = storeToRefs(workoutsStore);
 /** @type {Emit} */
 const emit = defineEmits(['creation-needed', 'deleted', 'loading-failed']);
 
+const {
+  isLoading,
+  error,
+  execute: load,
+} = useAsyncOperation({
+  operation: () => workoutsStore.loadAll(),
+  onError: (loadError) => emit('loading-failed', loadError),
+  executeOnMount: true,
+});
 const { isExpanded, forceCollapse, setExpandButtonRef, toggleExpand } = useExpandableList();
 const { isDeleting, markDeleting, unmarkDeleting, setDeleteButtonRef, focusNeighbourAfterRemoval } =
   useListDeletionFocus({ onListBecameEmpty: () => emit('creation-needed') });
-
-const isLoading = ref(false);
-/** @type {import('vue').Ref<Error|null>} */
-const error = ref(null);
 
 /**
  * @param {UUID} id - The ID of the workout to toggle details for.
@@ -74,24 +78,6 @@ async function deleteWorkout(id) {
     unmarkDeleting(id);
   }
 }
-
-/** @returns {Promise<void>} */
-async function load() {
-  try {
-    isLoading.value = true;
-    error.value = null;
-
-    await workoutsStore.loadAll();
-  } catch (storeError) {
-    error.value = ensureError(storeError);
-
-    emit('loading-failed', error.value);
-  } finally {
-    isLoading.value = false;
-  }
-}
-
-onMounted(load);
 </script>
 
 <template>
@@ -102,7 +88,7 @@ onMounted(load);
     <p role="status" v-if="isLoading">Loading workouts...</p>
     <div role="alert" v-else-if="error">
       <p>{{ error.message || 'Could not load workouts.' }}</p>
-      <button type="button" @click="load()">Retry</button>
+      <button type="button" @click="load">Retry</button>
     </div>
 
     <!-- Empty state -->
