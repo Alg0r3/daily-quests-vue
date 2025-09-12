@@ -16,7 +16,7 @@
  * @property {(deleteId: UUID, previousIndex: number, list: Array<ItemWithId>) => Promise<void>} focusNeighbourAfterRemoval
  */
 
-import { nextTick, reactive } from 'vue';
+import { nextTick, onBeforeUnmount, reactive } from 'vue';
 
 /**
  * Manages deletion UX for list rows: disabling items during selection and restoring focus to the
@@ -29,8 +29,8 @@ export function useListDeletionFocus(options) {
 
   const deletingIds = reactive(new Set());
 
-  /** @type {import('vue').Reactive<Record<UUID, HTMLButtonElement|null>>} */
-  const deleteButtonById = reactive({});
+  /** @type {Record<UUID, HTMLButtonElement|null>} */
+  const deleteButtonById = Object.create(null);
 
   /**
    * @param {UUID} id
@@ -80,6 +80,10 @@ export function useListDeletionFocus(options) {
 
     if (list.length === 0) {
       onListBecameEmpty();
+
+      // Ensure we drop the stale reference for the removed item
+      delete deleteButtonById[deleteId];
+
       return;
     }
 
@@ -92,7 +96,19 @@ export function useListDeletionFocus(options) {
       null;
 
     targetButton?.focus();
+
+    // Drop stale reference for the removed item
+    delete deleteButtonById[deleteId];
   }
+
+  // Cleaning on a component unmount
+  onBeforeUnmount(() => {
+    deletingIds.clear();
+
+    for (const id in deleteButtonById) {
+      delete deleteButtonById[id];
+    }
+  });
 
   return {
     isDeleting,
