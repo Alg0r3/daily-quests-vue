@@ -25,7 +25,11 @@ const {
   execute: load,
 } = useAsyncOperation({
   operation: () => workoutsStore.loadAll(),
-  onError: (loadError) => emit('loading-failed', loadError),
+  onError: (loadError) => {
+    emit('loading-failed', loadError);
+    console.error('Failed to load workouts.', loadError);
+  },
+  suppressErrors: true,
   executeOnMount: true,
 });
 const { isExpanded, forceCollapse, setExpandButtonRef, toggleExpand } = useExpandableList();

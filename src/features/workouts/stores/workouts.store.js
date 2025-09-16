@@ -1,25 +1,19 @@
 import { defineStore } from 'pinia';
 import { workoutsRepository } from '@/features/workouts/repositories/workouts.repository.js';
-import { reactive, ref, computed } from 'vue';
-import { ensureError } from '@/shared/utils/errors.js';
+import { reactive, computed } from 'vue';
+import { useAsyncOperation } from '@/features/workouts/composables/useAsyncOperation.js';
 
 /** @typedef {import('@/features/workouts/types').Workout} Workout */
 
 export const useWorkoutsStore = defineStore('workouts', () => {
   const workoutsById = reactive(new Map());
-  const isLoading = ref(false);
-
-  /** @type {import('vue').Ref<Error | null>} */
-  const error = ref(null);
 
   /** @type {import('vue').ComputedRef<Workout[]>} */
   const workoutList = computed(() => Array.from(workoutsById.values()));
 
-  async function loadAll() {
-    isLoading.value = true;
-    error.value = null;
-
-    try {
+  /** @returns {Promise<Workout[]>} */
+  const loadAllOperations = useAsyncOperation({
+    operation: async () => {
       const workouts = await workoutsRepository.findAll();
 
       workoutsById.clear();
@@ -27,88 +21,79 @@ export const useWorkoutsStore = defineStore('workouts', () => {
       for (const workout of workouts) {
         workoutsById.set(workout.id, workout);
       }
-    } catch (fetchError) {
-      console.error('Failed to fetch workouts.', fetchError);
 
-      error.value = ensureError(fetchError);
-
-      throw fetchError;
-    } finally {
-      isLoading.value = false;
-    }
-  }
+      return workouts;
+    },
+    onError: (error) => {
+      console.error('Error when loading all workouts:', error);
+    },
+  });
 
   /**
    * @param {UUID} id
    * @returns {Promise<Workout>}
    */
-  async function loadById(id) {
-    isLoading.value = true;
-    error.value = null;
+  const loadOperationById = useAsyncOperation({
+    operation: /** @type {(id: UUID) => Promise<Workout>} */ (
+      async (id) => {
+        const workout = await workoutsRepository.findById(id);
 
-    try {
-      const workout = await workoutsRepository.findById(id);
+        workoutsById.set(workout.id, workout);
 
-      workoutsById.set(workout.id, workout);
+        return workout;
+      }
+    ),
+    onError: (error) => {
+      console.error('Error when loading workout by ID:', error);
+    },
+  });
 
-      return workout;
-    } catch (fetchError) {
-      console.error('Failed to fetch workout.', fetchError);
+  /**
+   * @param {Omit<Workout, 'id'>} payload
+   * @returns {Promise<Workout>}
+   */
+  const createOperation = useAsyncOperation({
+    operation: /** @type {(payload: Omit<Workout, 'id'>) => Promise<Workout>} */ (
+      async (payload) => {
+        const workout = await workoutsRepository.create(payload);
 
-      error.value = ensureError(fetchError);
+        workoutsById.set(workout.id, workout);
 
-      throw fetchError;
-    } finally {
-      isLoading.value = false;
-    }
-  }
+        return workout;
+      }
+    ),
+    onError: (error) => {
+      console.error('Error when creating workout:', error);
+    },
+  });
 
-  /** @param {Omit<Workout, 'id'>} payload */
-  async function create(payload) {
-    isLoading.value = true;
-    error.value = null;
+  /**
+   * @param {UUID} id
+   * @returns {Promise<UUID>}
+   */
+  const removeOperation = useAsyncOperation({
+    operation: /** @type {(id: UUID) => Promise<UUID>} */ (
+      async (id) => {
+        await workoutsRepository.remove(id);
 
-    try {
-      const workout = await workoutsRepository.create(payload);
+        workoutsById.delete(id);
 
-      workoutsById.set(workout.id, workout);
-    } catch (fetchError) {
-      console.error('Failed to add workout.', fetchError);
-
-      error.value = ensureError(fetchError);
-
-      throw fetchError;
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  /** @param {UUID} id */
-  async function remove(id) {
-    isLoading.value = true;
-    error.value = null;
-
-    try {
-      await workoutsRepository.remove(id);
-
-      workoutsById.delete(id);
-    } catch (fetchError) {
-      console.error('Failed to remove workout.', fetchError);
-
-      error.value = ensureError(fetchError);
-
-      throw fetchError;
-    } finally {
-      isLoading.value = false;
-    }
-  }
+        return id;
+      }
+    ),
+    onError: (error) => {
+      console.error('Error when removing workout:', error);
+    },
+  });
 
   return {
     workoutList,
     workoutsById,
-    loadAll,
-    loadById,
-    create,
-    remove,
+    loadAll: loadAllOperations.execute,
+    loadById: /** @type {(id: UUID) => Promise<Workout|null>} */ (id) =>
+      loadOperationById.execute(id),
+    create: /** @type {(payload: Omit<Workout, 'id'>) => Promise<Workout|null>} */ (payload) =>
+      createOperation.execute(payload),
+    remove: /** @type {(id: UUID) => Promise<UUID|null>} */ (id) => removeOperation.execute(id),
   };
 });
