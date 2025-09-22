@@ -1,41 +1,39 @@
 import { defineStore } from 'pinia';
 import { exercisesRepository } from '@/features/workouts/repositories/exercises.repository.js';
-import { reactive, computed } from 'vue';
+import { computed, reactive } from 'vue';
+import { useAsyncOperation } from '@/features/workouts/composables/useAsyncOperation.js';
 
 /** @typedef {import('@/features/workouts/types').Exercise} Exercise */
 
 export const useExercisesStore = defineStore('exercises', () => {
+  /** @type {Map<UUID, Exercise>} */
   const exercisesById = reactive(new Map());
 
-  /** @type {import('vue').ComputedRef<Exercise[]>} */
+  /** @type import('vue').ComputedRef<Exercise[]> */
   const exerciseList = computed(() => Array.from(exercisesById.values()));
 
   /**
-   *
+   * @param {Omit<Exercise, 'id'>} payload
+   * @returns {Promise<Exercise>}
    */
-  async function loadAll() {
-    const exercises = await exercisesRepository.findAll();
+  const createOperation = useAsyncOperation({
+    operation: /** @type {(payload: Omit<Exercise, 'id'>) => Promise<Exercise>} */ (
+      async (payload) => {
+        const exercise = await exercisesRepository.create(payload);
 
-    exercisesById.clear();
+        exercisesById.set(exercise.id, exercise);
 
-    for (const exercise of exercises) {
-      exercisesById.set(exercise.id, exercise);
-    }
-  }
+        return exercise;
+      }
+    ),
+    onError: (error) => {
+      console.error('Error when creating exercise:', error);
+    },
+  });
 
-  /** @param {Omit<Exercise, 'id'>} payload */
-  async function create(payload) {
-    const exercise = await exercisesRepository.create(payload);
-
-    exercisesById.set(exercise.id, exercise);
-  }
-
-  /** @param {UUID} id */
-  async function remove(id) {
-    await exercisesRepository.remove(id);
-
-    exercisesById.delete(id);
-  }
-
-  return { exerciseList, loadAll, create, remove };
+  return {
+    exerciseList,
+    create: /** @type {(payload: Omit<Exercise, 'id'>) => Promise<Exercise|null>} */ (payload) =>
+      createOperation.execute(payload),
+  };
 });

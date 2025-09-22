@@ -1,18 +1,27 @@
-<script setup lang="js">
-import { useWorkoutsStore } from '@/features/workouts/stores/workouts.store.js';
-import { ref, onMounted, nextTick } from 'vue';
+<script setup>
+import { nextTick, onMounted, ref } from 'vue';
+import { useExercisesStore } from '@/features/workouts/stores/exercises.store.js';
+
+const props = defineProps({
+  workoutId: {
+    type: /** @type {UUID} */ String,
+    required: true,
+  },
+});
 
 const emits = defineEmits(['created', 'cancelled']);
 
-const workoutStore = useWorkoutsStore();
+const exerciseStore = useExercisesStore();
 
 const name = ref('');
 
 /** @type {import('vue').Ref<HTMLInputElement|null>} */
 const firstInput = ref(null);
 
-async function onSubmit() {
-  await workoutStore.create({ name: name.value });
+async function onsubmit() {
+  await exerciseStore.create({
+    workoutId: props.workoutId,
+  });
 
   name.value = '';
   emits('created');
@@ -31,8 +40,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <h2>New workout</h2>
-  <form @submit.prevent="onSubmit" @keyup.esc="emits('cancelled')">
+  <h2>New exercise</h2>
+  <form @submit.prevent="onsubmit" @keyup.esc="emits('cancelled')">
     <label for="name">Name</label>
     <input id="name" type="text" placeholder="Type a name" ref="firstInput" v-model.trim="name" />
     <button type="submit">Create</button>
