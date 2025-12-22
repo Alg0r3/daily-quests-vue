@@ -1,4 +1,4 @@
-import WorkoutView from '@/modules/workouts/presentation/views/WorkoutView.vue';
+import WorkoutView from '@/module/workout/presentation/views/WorkoutView.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [

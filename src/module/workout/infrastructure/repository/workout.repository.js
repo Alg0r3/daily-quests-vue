@@ -1,7 +1,7 @@
 import { workoutsDB } from '@/shared/database/index.js';
 import { v7 as uuidv7 } from 'uuid';
 
-/** @typedef {import('@/modules/workouts/domain/index.ts').Workout} Workout */
+/** @typedef {import('@/module/workout/domain/index.ts').Workout} Workout */
 
 /** @returns {Promise<Workout[]>} */
 export async function findAll() {
@@ -46,4 +46,4 @@ export async function remove(id) {
   await workoutsDB.delete(id);
 }
 
-export const workoutsRepository = { findAll, findById, create, remove };
+export const workoutRepository = { findAll, findById, create, remove };

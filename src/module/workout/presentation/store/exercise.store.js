@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
-import { exercisesRepository } from '@/modules/workouts/infrastructure/repositories/exercises.repository.js';
+import { exerciseRepository } from '@/module/workout/infrastructure/repository/exercise.repository.js';
 import { computed, reactive } from 'vue';
-import { useAsyncOperation } from '@/modules/workouts/presentation/composables/useAsyncOperation.js';
+import { useAsyncOperation } from '@/module/workout/presentation/composable/useAsyncOperation.js';
 
-/** @typedef {import('@/modules/workouts/domain/index.ts').Exercise} Exercise */
+/** @typedef {import('@/module/workout/domain/index.ts').Exercise} Exercise */
 
 export const useExercisesStore = defineStore('exercises', () => {
   /** @type {Map<UUID, Exercise>} */
@@ -19,7 +19,7 @@ export const useExercisesStore = defineStore('exercises', () => {
   const createOperation = useAsyncOperation({
     operation: /** @type {(payload: Omit<Exercise, 'id'>) => Promise<Exercise>} */ (
       async (payload) => {
-        const exercise = await exercisesRepository.create(payload);
+        const exercise = await exerciseRepository.create(payload);
 
         exercisesById.set(exercise.id, exercise);
 

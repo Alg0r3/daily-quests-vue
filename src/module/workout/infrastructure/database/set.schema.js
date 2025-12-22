@@ -1,4 +1,4 @@
-export const setsSchema = {
+export const setSchema = {
   schema: {
     sets: 'id',
   },

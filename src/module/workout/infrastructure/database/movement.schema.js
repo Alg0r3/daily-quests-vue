@@ -1,4 +1,4 @@
-export const movementsSchema = {
+export const movementSchema = {
   schema: {
     movements: 'id',
   },

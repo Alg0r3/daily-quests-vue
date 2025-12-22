@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
-import { workoutsRepository } from '@/modules/workouts/infrastructure/repositories/workouts.repository.js';
+import { workoutRepository } from '@/module/workout/infrastructure/repository/workout.repository.js';
 import { reactive, computed } from 'vue';
-import { useAsyncOperation } from '@/modules/workouts/presentation/composables/useAsyncOperation.js';
+import { useAsyncOperation } from '@/module/workout/presentation/composable/useAsyncOperation.js';
 
-/** @typedef {import('@/modules/workouts/domain/index.ts').Workout} Workout */
+/** @typedef {import('@/module/workout/domain/index.ts').Workout} Workout */
 
 export const useWorkoutsStore = defineStore('workouts', () => {
   const workoutsById = reactive(new Map());
@@ -14,7 +14,7 @@ export const useWorkoutsStore = defineStore('workouts', () => {
   /** @returns {Promise<Workout[]>} */
   const loadAllOperations = useAsyncOperation({
     operation: async () => {
-      const workouts = await workoutsRepository.findAll();
+      const workouts = await workoutRepository.findAll();
 
       workoutsById.clear();
 
@@ -36,7 +36,7 @@ export const useWorkoutsStore = defineStore('workouts', () => {
   const loadOperationById = useAsyncOperation({
     operation: /** @type {(id: UUID) => Promise<Workout>} */ (
       async (id) => {
-        const workout = await workoutsRepository.findById(id);
+        const workout = await workoutRepository.findById(id);
 
         workoutsById.set(workout.id, workout);
 
@@ -55,7 +55,7 @@ export const useWorkoutsStore = defineStore('workouts', () => {
   const createOperation = useAsyncOperation({
     operation: /** @type {(payload: Omit<Workout, 'id'>) => Promise<Workout>} */ (
       async (payload) => {
-        const workout = await workoutsRepository.create(payload);
+        const workout = await workoutRepository.create(payload);
 
         workoutsById.set(workout.id, workout);
 
@@ -74,7 +74,7 @@ export const useWorkoutsStore = defineStore('workouts', () => {
   const removeOperation = useAsyncOperation({
     operation: /** @type {(id: UUID) => Promise<UUID>} */ (
       async (id) => {
-        await workoutsRepository.remove(id);
+        await workoutRepository.remove(id);
 
         workoutsById.delete(id);
 

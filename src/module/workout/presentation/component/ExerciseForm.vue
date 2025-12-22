@@ -1,6 +1,6 @@
 <script setup>
 import { nextTick, onMounted, ref } from 'vue';
-import { useExercisesStore } from '@/modules/workouts/presentation/stores/exercises.store.js';
+import { useExercisesStore } from '@/module/workout/presentation/store/exercise.store.js';
 
 const props = defineProps({
   workoutId: {

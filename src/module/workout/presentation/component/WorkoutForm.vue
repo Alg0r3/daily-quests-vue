@@ -1,5 +1,5 @@
 <script setup lang="js">
-import { useWorkoutsStore } from '@/modules/workouts/presentation/stores/workouts.store.js';
+import { useWorkoutsStore } from '@/module/workout/presentation/store/workout.store.js';
 import { ref, onMounted, nextTick } from 'vue';
 
 const emits = defineEmits(['created', 'cancelled']);

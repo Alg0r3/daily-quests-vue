@@ -1,5 +1,5 @@
 import { onMounted, ref } from 'vue';
-import { ensureError } from '@/shared/utils/errors.js';
+import { ensureError } from '@/shared/util/errors.js';
 
 /**
  * @template T
