@@ -1,4 +1,4 @@
-export const workoutsTable = {
+export const workoutsSchema = {
   schema: {
     workouts: 'id',
   },

@@ -1,7 +1,7 @@
 import { exercisesDB } from '@/shared/database/index.js';
 import { v7 as uuidv7 } from 'uuid';
 
-/** @typedef {import('@/features/workouts/types').Exercise} Exercise */
+/** @typedef {import('@/modules/workouts/domain/index.ts').Exercise} Exercise */
 
 /** @returns {Promise<Exercise[]>} */
 export async function findAll() {

@@ -1,11 +1,11 @@
-import WorkoutPage from '@/pages/WorkoutPage.vue';
+import WorkoutView from '@/modules/workouts/presentation/views/WorkoutView.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: WorkoutPage,
+    component: WorkoutView,
     meta: { title: 'Workout' },
   },
 ];

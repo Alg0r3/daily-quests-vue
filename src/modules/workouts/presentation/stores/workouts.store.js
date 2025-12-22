@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
-import { workoutsRepository } from '@/features/workouts/repositories/workouts.repository.js';
+import { workoutsRepository } from '@/modules/workouts/infrastructure/repositories/workouts.repository.js';
 import { reactive, computed } from 'vue';
-import { useAsyncOperation } from '@/features/workouts/composables/useAsyncOperation.js';
+import { useAsyncOperation } from '@/modules/workouts/presentation/composables/useAsyncOperation.js';
 
-/** @typedef {import('@/features/workouts/types').Workout} Workout */
+/** @typedef {import('@/modules/workouts/domain/index.ts').Workout} Workout */
 
 export const useWorkoutsStore = defineStore('workouts', () => {
   const workoutsById = reactive(new Map());

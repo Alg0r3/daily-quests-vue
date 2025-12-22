@@ -1,6 +1,6 @@
 <script setup lang="js">
-import WorkoutForm from '@/features/workouts/components/WorkoutForm.vue';
-import WorkoutList from '@/features/workouts/components/WorkoutList.vue';
+import WorkoutForm from '@/modules/workouts/presentation/components/WorkoutForm.vue';
+import WorkoutList from '@/modules/workouts/presentation/components/WorkoutList.vue';
 import { ref } from 'vue';
 
 const isFormVisible = ref(false);

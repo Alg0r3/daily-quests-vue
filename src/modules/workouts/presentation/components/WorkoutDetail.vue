@@ -1,6 +1,6 @@
 <script setup lang="js">
 import { defineProps, computed } from 'vue';
-import { useWorkoutsStore } from '@/features/workouts/stores/workouts.store.js';
+import { useWorkoutsStore } from '@/modules/workouts/presentation/stores/workouts.store.js';
 
 const props = defineProps({
   workoutId: {

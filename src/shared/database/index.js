@@ -1,19 +1,19 @@
 import Dexie from 'dexie';
-import { workoutsTable } from '@/features/workouts/tables/workouts.table.js';
-import { exercisesTable } from '@/features/workouts/tables/exercises.table.js';
-import { movementsTable } from '@/features/workouts/tables/movements.table.js';
-import { setsTable } from '@/features/workouts/tables/sets.table.js';
+import { workoutsSchema } from '@/modules/workouts/infrastructure/database/workouts.schema.js';
+import { exercisesSchema } from '@/modules/workouts/infrastructure/database/exercises.schema.js';
+import { movementsSchema } from '@/modules/workouts/infrastructure/database/movements.schema.js';
+import { setsSchema } from '@/modules/workouts/infrastructure/database/sets.schema.js';
 
-/** @typedef {import('@/features/workouts/types').Workout} Workout */
-/** @typedef {import('@/features/workouts/types').Exercise} Exercise */
+/** @typedef {import('@/modules/workouts/domain/index.ts').Workout} Workout */
+/** @typedef {import('@/modules/workouts/domain/index.ts').Exercise} Exercise */
 
 export const database = new Dexie('database');
 
 database.version(1).stores({
-  ...workoutsTable.schema,
-  ...exercisesTable.schema,
-  ...movementsTable.schema,
-  ...setsTable.schema,
+  ...workoutsSchema.schema,
+  ...exercisesSchema.schema,
+  ...movementsSchema.schema,
+  ...setsSchema.schema,
 });
 
 /** @type {Dexie.Table<Workout, string>} */

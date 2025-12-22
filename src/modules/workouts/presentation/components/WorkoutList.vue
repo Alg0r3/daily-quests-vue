@@ -1,10 +1,10 @@
 <script setup lang="js">
-import { useWorkoutsStore } from '@/features/workouts/stores/workouts.store.js';
+import { useWorkoutsStore } from '@/modules/workouts/presentation/stores/workouts.store.js';
 import { storeToRefs } from 'pinia';
-import { useAsyncOperation } from '@/features/workouts/composables/useAsyncOperation.js';
-import { useExpandableList } from '@/features/workouts/composables/useExpandableList.js';
-import { useListDeletionFocus } from '@/features/workouts/composables/useListDeletionFocus.js';
-import WorkoutDetail from '@/features/workouts/components/WorkoutDetail.vue';
+import { useAsyncOperation } from '@/modules/workouts/presentation/composables/useAsyncOperation.js';
+import { useExpandableList } from '@/modules/workouts/presentation/composables/useExpandableList.js';
+import { useListDeletionFocus } from '@/modules/workouts/presentation/composables/useListDeletionFocus.js';
+import WorkoutDetail from '@/modules/workouts/presentation/components/WorkoutDetail.vue';
 
 /** @typedef {{
  *  (event: 'creation-needed'): void;
