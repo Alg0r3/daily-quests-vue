@@ -12,7 +12,7 @@ const name = ref('');
 const firstInput = ref(null);
 
 async function onSubmit() {
-  await workoutStore.create({ name: name.value });
+  await workoutStore.createWorkout({ name: name.value });
 
   name.value = '';
   emits('created');

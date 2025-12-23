@@ -1,7 +1,5 @@
 export interface Exercise {
   id: UUID;
+  name: string;
   workoutId: UUID;
-  movementId?: UUID;
-  notes?: string;
-  sets: string[]; // TODO: use ExerciseSet[]
 }

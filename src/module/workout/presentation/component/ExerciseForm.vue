@@ -1,6 +1,6 @@
 <script setup>
 import { nextTick, onMounted, ref } from 'vue';
-import { useExercisesStore } from '@/module/workout/presentation/store/exercise.store.js';
+import { useWorkoutsStore } from '@/module/workout/presentation/store/workout.store.js';
 
 const props = defineProps({
   workoutId: {
@@ -11,7 +11,7 @@ const props = defineProps({
 
 const emits = defineEmits(['created', 'cancelled']);
 
-const exerciseStore = useExercisesStore();
+const workoutStore = useWorkoutsStore();
 
 const name = ref('');
 
@@ -19,8 +19,9 @@ const name = ref('');
 const firstInput = ref(null);
 
 async function onsubmit() {
-  await exerciseStore.create({
+  await workoutStore.createExercise({
     workoutId: props.workoutId,
+    name: name.value,
   });
 
   name.value = '';

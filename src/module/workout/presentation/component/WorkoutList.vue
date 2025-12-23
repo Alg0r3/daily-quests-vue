@@ -24,7 +24,7 @@ const {
   error,
   execute: load,
 } = useAsyncOperation({
-  operation: () => workoutsStore.loadAll(),
+  operation: () => workoutsStore.loadAllWorkouts(),
   onError: (loadError) => {
     emit('loading-failed', loadError);
     console.error('Failed to load workouts.', loadError);
@@ -65,7 +65,7 @@ async function deleteWorkout(id) {
   markDeleting(id);
 
   try {
-    await workoutsStore.remove(id);
+    await workoutsStore.removeWorkout(id);
 
     // If we're deleting the currently expanded item, collapse it
     forceCollapse(id);

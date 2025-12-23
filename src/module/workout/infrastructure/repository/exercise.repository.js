@@ -16,10 +16,8 @@ export async function create(payload) {
   /** @type {Exercise} */
   const exercise = {
     id: uuidv7(),
+    name: payload.name,
     workoutId: payload.workoutId,
-    movementId: payload.movementId,
-    notes: payload.notes,
-    sets: payload.sets,
   };
 
   await exercisesDB.add(exercise);
