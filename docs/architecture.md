@@ -263,5 +263,5 @@ Use these to decide quickly:
 - commands: `*.command.js`
 - stores: `*.store.js`
 - repositories:
-    - contracts: `*-repository.js` (JSDoc typedef-only)
-    - implementations: `dexie-*.repository.js` (later: `http-*.repository.js`)
+    - contracts: `*.repository.js` (JSDoc typedef-only)
+    - implementations: `dexie.*.repository.js` (later: `http.*.repository.js`)

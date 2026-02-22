@@ -1,13 +1,13 @@
-import WorkoutView from '@/module/workout/presentation/views/WorkoutView.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import DevPlaygroundView from '@/modules/workout/presentation/views/DevPlaygroundView.vue';
 
 const routes = [
   {
-    path: '/',
-    name: 'home',
-    component: WorkoutView,
-    meta: { title: 'Workout' },
-  },
+    path: '/dev/playground',
+    name: 'playground',
+    component: DevPlaygroundView,
+    meta: { title: 'DevPlayground' },
+  }
 ];
 
 const router = createRouter({
