@@ -35,7 +35,7 @@ function handleToggleDone() {
   emits('complete', {
     weightKg: weightKg.value,
     reps: reps.value,
-  })
+  });
 }
 </script>
 
@@ -55,13 +55,25 @@ function handleToggleDone() {
       ></InputNumber>
     </div>
     <div class="flex-1">
-      <InputNumber v-model="reps" placeholder="Reps" :min="0" :disabled="isDone" fluid></InputNumber>
+      <InputNumber
+        v-model="reps"
+        placeholder="Reps"
+        :min="0"
+        :disabled="isDone"
+        fluid
+      ></InputNumber>
     </div>
     <div class="flex-none">
       <Button icon="pi pi-chevron-down" :disabled="isDone" text rounded />
     </div>
     <div class="flex-none">
-      <Button icon="pi pi-check" :severity="isDone ? 'success' : 'secondary'" :outlined="!isDone" rounded @click="handleToggleDone" />
+      <Button
+        icon="pi pi-check"
+        :severity="isDone ? 'success' : 'secondary'"
+        :outlined="!isDone"
+        rounded
+        @click="handleToggleDone"
+      />
     </div>
   </div>
 </template>

@@ -7,7 +7,7 @@ const routes = [
     name: 'playground',
     component: DevPlaygroundView,
     meta: { title: 'DevPlayground' },
-  }
+  },
 ];
 
 const router = createRouter({
