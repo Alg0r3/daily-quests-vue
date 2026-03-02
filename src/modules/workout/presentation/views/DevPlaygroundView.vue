@@ -3,7 +3,7 @@ import ExerciseSetRow from '@/modules/workout/presentation/components/ExerciseSe
 </script>
 
 <template>
-  <ExerciseSetRow set-index="1" />
+  <ExerciseSetRow :set-index="1" />
 </template>
 
 <style scoped></style>

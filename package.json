@@ -12,7 +12,7 @@
     "preview": "vite preview",
     "test:unit": "vitest",
     "lint": "eslint . --fix",
-    "typecheck": "tsc --project jsconfig.json",
+    "typecheck": "vue-tsc --noEmit --project jsconfig.json",
     "format": "prettier --write src/"
   },
   "dependencies": {
